@@ -1,15 +1,30 @@
 <template>
   <div id="app">
+    <div v-if="shots > 0">*** {{shotText}} ***</div>
     <GameUI />
     <Coordinates />
+    <button @click="asd">{{battle_ships_total_parts}}</button>
+    <div v-if="battle_ships_total_parts === 0">Well done! You completed the game in {{shots}} shots</div>
   </div>
 </template>
 
 <script>
+// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
+// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
+// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
+// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
+// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
+// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
 import GameUI from "./components/GameUI.vue";
 import Coordinates from "./components/Coordinates.vue";
 import { mapActions, mapState } from "vuex";
-import { ACTION_FIRST_ROW_ARR, ACTION_ROWS_OBJ, ACTION_BATTLE_SHIPS_TOTAL_PARTS  } from "../store/types.js"; 
+import { 
+  ACTION_FIRST_ROW_ARR, 
+  ACTION_ROWS_OBJ, 
+  ACTION_BATTLE_SHIPS_TOTAL_PARTS,
+  // TEST
+  ACTION_SHOT_TAKEN,
+} from "../store/types.js"; 
 
 export default {
   name: "app",
@@ -36,6 +51,8 @@ export default {
       battle_ships_arr: state => state.battle_ships_arr,
       // NE SE POLZVA
       battle_ships_total_parts: state => state.battle_ships_total_parts,
+      shots: state => state.shots,
+      shotText: state => state.shotText,
     }),
   },
   methods: {
@@ -43,7 +60,13 @@ export default {
       action_first_row_arr: ACTION_FIRST_ROW_ARR,
       action_rows_obj: ACTION_ROWS_OBJ,
       action_battle_ships_total_parts: ACTION_BATTLE_SHIPS_TOTAL_PARTS,
+  // TEST
+      action_shot_taken: ACTION_SHOT_TAKEN,
     }),
+  // TEST
+    asd() {
+      this.action_shot_taken(this.shots + 1);
+    },
     generateRandomVars(i) {
       const shipLength = this.battle_ships_arr[i];
       const min = 0;
@@ -130,9 +153,9 @@ export default {
   },
   created() {
     //#region fill data in Vuex
-    this.fillFirstRowArr();
-    this.fillRowsObj();
-    this.placeShipsInRandomPlaces();
+    // this.fillFirstRowArr();
+    // this.fillRowsObj();
+    // this.placeShipsInRandomPlaces();
 
 
 // IZTRII - DA VIJDAM SEGA MI TRQBVA

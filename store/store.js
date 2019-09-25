@@ -13,7 +13,9 @@ export default new Vuex.Store({
     rows_obj: {},
     dot: ".",
     battle_ships_arr: [5, 4, 4],
-    battle_ships_total_parts: null
+    battle_ships_total_parts: null,
+    shots: 0,
+    shotText: ''
   },
   mutations: {
     [types.FIRST_ROW_ARR]: (state, payload) => {
@@ -28,6 +30,12 @@ export default new Vuex.Store({
     [types.BATTLE_SHIPS_TOTAL_PARTS]: (state, payload) => {
       state.battle_ships_total_parts = payload;
     },
+    [types.SHOT_TAKEN]: (state, payload) => {
+      state.shots = payload;
+    },
+    [types.SHOT_TEXT]: (state, payload) => {
+      state.shotText = payload;
+    },
   },
   actions: {
     [types.ACTION_FIRST_ROW_ARR]({ commit }, payload) {
@@ -41,6 +49,12 @@ export default new Vuex.Store({
     },
     [types.ACTION_BATTLE_SHIPS_TOTAL_PARTS]({ commit }, payload) {
       commit(types.BATTLE_SHIPS_TOTAL_PARTS, payload);
+    },
+    [types.ACTION_SHOT_TAKEN]({ commit }, payload) {
+      commit(types.SHOT_TAKEN, payload);
+    },
+    [types.ACTION_SHOT_TEXT]({ commit }, payload) {
+      commit(types.SHOT_TEXT, payload);
     },
   }
 })

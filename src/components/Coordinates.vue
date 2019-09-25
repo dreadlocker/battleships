@@ -8,7 +8,12 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-import { ACTION_ROWS_OBJ, ACTION_BATTLE_SHIPS_TOTAL_PARTS } from "../../store/types.js"; 
+import { 
+  ACTION_ROWS_OBJ, 
+  ACTION_BATTLE_SHIPS_TOTAL_PARTS,
+  ACTION_SHOT_TAKEN,
+  ACTION_SHOT_TEXT,
+} from "../../store/types.js"; 
 
 export default {
   name: "Coordinates",
@@ -28,6 +33,7 @@ export default {
       // game_grid: state => state.game_grid,
       rows_obj: state => state.rows_obj,
       battle_ships_total_parts: state => state.battle_ships_total_parts,
+      shots: state => state.shots,
       // alphabet: state => state.alphabet,
       // dot: state => state.dot,
     }),
@@ -37,6 +43,8 @@ export default {
       // action_first_row_arr: ACTION_FIRST_ROW_ARR,
       action_rows_obj: ACTION_ROWS_OBJ,
       action_battle_ships_total_parts: ACTION_BATTLE_SHIPS_TOTAL_PARTS,
+      action_shot_taken: ACTION_SHOT_TAKEN,
+      action_shot_text: ACTION_SHOT_TEXT,
     }),
     checkForHit() {
       // FIX - AKO NQMA TAKUV ELEMENT ZA SELEKTIRANE DA POKAZVA NA USER NQKAKVA GRE6KA
@@ -75,11 +83,32 @@ export default {
       this.action_rows_obj(this.objCopy);
 
       const shipPartLess = this.battle_ships_total_parts - 1;
-      return this.action_battle_ships_total_parts(shipPartLess);
+      this.action_battle_ships_total_parts(shipPartLess);
+
+
+// FIX TEST NA TOVA
+      this.action_shot_taken(this.shots++);
+      console.log(this.shots);
+
+
+// FIX TEST NA TOVA
+if (!this.battle_ships_total_parts) {
+  this.action_shot_text("Sunk")
+}
+      return
     },
     hitMissed() {
       this.objCopy[this.objKey]["elementsArr"][this.index - 1] = "-";
-      return this.action_rows_obj(this.objCopy);
+      this.action_rows_obj(this.objCopy);
+
+// FIX TEST NA TOVA
+      this.action_shot_text("Miss");
+
+
+// FIX TEST NA TOVA
+      this.action_shot_taken(this.shots++);
+      console.log(this.shots);
+      return
     },
     inputClearAndFocus() {
       inp.value = "";
