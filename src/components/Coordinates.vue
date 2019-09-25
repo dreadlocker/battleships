@@ -1,20 +1,28 @@
 <template>
   <div class="row">
     <div id="text">Enter coordinates (row, col), e.g. A5</div>
-    <!-- FIX DA IZTRIQ value="A5" -->
-    <input id="inp" type="text" value="A5">
-    <button @click="makeHit">Submit</button>
+    <input @keyup.enter="checkForHit" id="inp" type="text" autofocus>
+    <button @click="checkForHit">Submit</button>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
 import { ACTION_ROWS_OBJ, ACTION_BATTLE_SHIPS_TOTAL_PARTS } from "../../store/types.js"; 
-const cloneDeep = require('lodash.clonedeep');
 
 export default {
   name: "Coordinates",
-   computed: {
+  data() {
+    return {
+      inpVal: null,
+      objKey: null,
+      index: null,
+      smallestNumOfFirstRow: null,
+      biggestNumOfFirstRow: null,
+      objCopy: null,
+    };
+  },
+  computed: {
     ...mapState({
       first_row_arr: state => state.first_row_arr,
       // game_grid: state => state.game_grid,
@@ -30,8 +38,31 @@ export default {
       action_rows_obj: ACTION_ROWS_OBJ,
       action_battle_ships_total_parts: ACTION_BATTLE_SHIPS_TOTAL_PARTS,
     }),
+    checkForHit() {
+      // FIX - AKO NQMA TAKUV ELEMENT ZA SELEKTIRANE DA POKAZVA NA USER NQKAKVA GRE6KA
+
+      this.saveInputVars();
+      return this.isInputWrong() ? null : this.makeHit();
+    },
+    saveInputVars() {
+      // Make user input with capital letter through JS if someone removes the CSS method for that
+      this.inpVal = inp.value.toUpperCase();
+      this.objKey = this.inpVal[0];
+      this.index = +this.inpVal.substr(1);
+      this.smallestNumOfFirstRow = this.first_row_arr[1];
+      return this.biggestNumOfFirstRow = this.first_row_arr[this.first_row_arr.length - 1];
+    },
+    isInputWrong() {
+      const inputIswrong = !((/^[A-Z]\d{1,2}$/g).test(this.inpVal));
+      return inputIswrong || this.index < this.smallestNumOfFirstRow || this.index > this.biggestNumOfFirstRow ? [this.inputClearAndFocus(), true] : false;
+    },
+    makeHit() {
+      this.objCopy = this.deepCopyObj(this.rows_obj);
+      (this.rows_obj[this.objKey]["isShipPartArr"][this.index - 1]) ? this.shipPartHit() : this.hitMissed();
+      return this.inputClearAndFocus();
+    },
     deepCopyObj(o) {
-      var out, v, key;
+      let out, v, key;
       out = Array.isArray(o) ? [] : {};
       for (key in o) {
         v = o[key];
@@ -39,36 +70,20 @@ export default {
       }
       return out;
     },
-    makeHit() {
-      // FIX - AKO NQMA TAKUV ELEMENT ZA SELEKTIRANE DA POKAZVA NA USER NQKAKVA GRE6KA
-      // FIX - .inp REGEX PROVERKA NA DANNITE VUVEDENI OT USER
-      // FIX DA IZNESA REGEX V METHOD, TYK SAMO DA GO IZVIKVAM
+    shipPartHit() {
+      this.objCopy[this.objKey]["elementsArr"][this.index - 1] = "x";
+      this.action_rows_obj(this.objCopy);
 
-      const inpVal = inp.value.toUpperCase();
-      const isValidInput = (/^[A-Z]\d{0,2}$/g).test(inpVal)
-      if(!isValidInput) return
-
-      const objKey = inpVal[0]
-
-      const index = +inpVal.substr(1)
-      const lastNumOfFirstRow = this.first_row_arr[this.first_row_arr.length - 1];
-      const firstNumOfFirstRow = this.first_row_arr[1];
-      if(index > lastNumOfFirstRow || index < firstNumOfFirstRow) return
-      console.log(index);
-      
-      const objCopy = this.deepCopyObj(this.rows_obj);
-      (this.rows_obj[objKey]['isShipPartArr'][index - 1]) ? this.shipPartHit(objCopy, objKey, index) : this.hitMissed(objCopy, objKey, index);
+      const shipPartLess = this.battle_ships_total_parts - 1;
+      return this.action_battle_ships_total_parts(shipPartLess);
     },
-    shipPartHit(objCopy, objKey, index) {
-        objCopy[objKey]['elementsArr'][index - 1] = "x"
-        this.action_rows_obj(objCopy)
-
-        const shipPartLess = this.battle_ships_total_parts - 1
-        this.action_battle_ships_total_parts(shipPartLess)
+    hitMissed() {
+      this.objCopy[this.objKey]["elementsArr"][this.index - 1] = "-";
+      return this.action_rows_obj(this.objCopy);
     },
-    hitMissed(objCopy, objKey, index) {
-        objCopy[objKey]['elementsArr'][index - 1] = "-"
-        this.action_rows_obj(objCopy)
+    inputClearAndFocus() {
+      inp.value = "";
+      return inp.focus();
     }
   }
 };

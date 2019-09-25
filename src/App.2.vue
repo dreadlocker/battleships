@@ -74,59 +74,33 @@ export default {
     },
     placeShipsInRandomPlaces() {
       for (let i = 0; i < this.battle_ships_arr.length; i++) {
-        // const randomShipDirection = Math.floor(Math.random () * (1 - 0 + 1)) + 0
-        let randomShipDirection = 0
+        const randomDirection = Math.floor(Math.random () * (1 - 0 + 1)) + 0
         this.generateRandomVars(i);
+        // this.this.indexOfShipStart, this.this.indexOfShipEnd, this.this.indexOfRowLetter = this.generateRandomVars(i);
 
-
-        // if (i === 0) {
-        //   randomShipDirection = 1
-        //   this.indexOfRowLetter = 4
-        //   this.indexOfShipStart = 4
-        //   this.indexOfShipEnd = 9
-        // }
-        // if (i === 1) {
-        //   randomShipDirection = 0
-        //   this.indexOfRowLetter = 5
-        //   this.indexOfShipStart = 5
-        //   this.indexOfShipEnd = 9
-        // }
-        // if (i === 2) {
-        //   randomShipDirection = 1
-        //   this.indexOfRowLetter = 0
-        //   this.indexOfShipStart = 0
-        //   this.indexOfShipEnd = 4
-        // }
-            console.log(this.battle_ships_arr[i], randomShipDirection, this.alphabet[this.indexOfRowLetter], this.indexOfShipStart, this.indexOfShipEnd);
-
-
-        if (!randomShipDirection) {
-          const chechArr = this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"].slice(this.indexOfShipStart, this.indexOfShipEnd+1);
-          if (chechArr.every(str => str === false)) {
-            this.rowsObj = this.deepCopyObj(this.rowsObj)
-            for (let y = this.indexOfShipStart; y < this.indexOfShipEnd; y++) this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"][y] = 'x';
-          } else { i--; }
+        if (!randomDirection) {
+          i = i - this.shipInRow(i)
         } else {
-          const chechArr = [];
-          for (let z = this.indexOfShipStart; z < this.indexOfShipEnd; z++) {
-
-            chechArr.push(this.rowsObj[this.alphabet[i]]["isShipPartArr"][this.indexOfRowLetter]);
-          } 
-          if (chechArr.every(str => str === false)) {
-            this.rowsObj = this.deepCopyObj(this.rowsObj)
-            for (let z = this.indexOfShipStart; z < this.indexOfShipEnd; z++) this.rowsObj[this.alphabet[z]]["isShipPartArr"][this.indexOfRowLetter] = true;
-          } else { 
-            console.log(this.indexOfRowLetter, this.indexOfShipStart, this.indexOfShipEnd);
-            i--; }
+          i = i - this.shipInColumn(i)
         }
       }
     },
-    // shipInRow(i) {
-    //   const chechArr = this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"].slice(this.indexOfShipStart, this.indexOfShipEnd);
-    //   if (chechArr.every(str => str === false)) {
-    //     this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"] = this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"].map((bool, index) => index >= this.indexOfShipStart && index < this.indexOfShipEnd? true : false);
-    //   } else { i--; }
-    // },
+    shipInRow(i) {
+      const chechArr = this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"].slice(this.indexOfShipStart, this.indexOfShipEnd);
+      if (chechArr.every(str => str === false)) {
+        this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"] = this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"].map((bool, index) => index >= this.indexOfShipStart && index < this.indexOfShipEnd? true : false);
+        return 0
+      } else { return 1; }
+    },
+    shipInColumn(i) {
+      const chechArr = [];
+      for (let i = this.indexOfShipStart; i < this.indexOfShipEnd; i++) chechArr.push(this.rowsObj[this.alphabet[i]]["isShipPartArr"][this.indexOfRowLetter]);
+      if (chechArr.every(str => str === false)) {
+        this.rowsObj = this.deepCopyObj(this.rowsObj)
+        for (let i = this.indexOfShipStart; i < this.indexOfShipEnd; i++) this.rowsObj[this.alphabet[i]]["isShipPartArr"][this.indexOfRowLetter] = true;
+        return 0
+      } else { return 1; }
+    },
   },
   created() {
     //#region fill data in Vuex
@@ -135,7 +109,7 @@ export default {
     this.placeShipsInRandomPlaces();
 
 
-// IZTRII - DA VIJDAM SEGA MI TRQBVA
+// IZTRII - DA VIJDAMSEGA MI TRQBVA
     for (const key in this.rowsObj) {
         const arr = this.rowsObj[key]['isShipPartArr'];
         for (let i = 0; i < arr.length; i++) {

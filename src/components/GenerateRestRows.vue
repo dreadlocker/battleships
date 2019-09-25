@@ -22,7 +22,7 @@ export default {
     }),
   },
   // beforeMount() {
-    // console.log(this.rows_obj["A"]['elementsArr']);
+  // console.log(this.rows_obj["A"]['elementsArr']);
   // },
   // watch: {
   //   rows_obj(val) {
@@ -30,7 +30,7 @@ export default {
   //     console.log(val);
   //   }
   // }
-}
+};
 </script>
 
 <style scoped lang="sass">

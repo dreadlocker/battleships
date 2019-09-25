@@ -44,6 +44,7 @@ export default {
       action_rows_obj: ACTION_ROWS_OBJ,
       action_battle_ships_total_parts: ACTION_BATTLE_SHIPS_TOTAL_PARTS,
     }),
+    // FIX TEST BEZ RETURN
     generateRandomVars(i) {
       const shipLength = this.battle_ships_arr[i];
       const min = 0;
@@ -51,7 +52,7 @@ export default {
 
       this.indexOfShipStart = Math.floor(Math.random () * (max - min + 1)) + min;
       this.indexOfShipEnd = this.indexOfShipStart + shipLength;
-      return this.indexOfRowLetter = Math.floor(Math.random () * (max - min + 1)) + min;
+      this.indexOfRowLetter = Math.floor(Math.random () * (max - min + 1)) + min;
     },
     deepCopyObj(o) {
       let out, v, key;
@@ -75,7 +76,7 @@ export default {
     placeShipsInRandomPlaces() {
       for (let i = 0; i < this.battle_ships_arr.length; i++) {
         // const randomShipDirection = Math.floor(Math.random () * (1 - 0 + 1)) + 0
-        let randomShipDirection = 0
+        let randomShipDirection = Math.floor(Math.random () * (1 - 0 + 1)) + 0
         this.generateRandomVars(i);
 
 
@@ -97,27 +98,45 @@ export default {
         //   this.indexOfShipStart = 0
         //   this.indexOfShipEnd = 4
         // }
-            console.log(this.battle_ships_arr[i], randomShipDirection, this.alphabet[this.indexOfRowLetter], this.indexOfShipStart, this.indexOfShipEnd);
 
+
+        if (i === 0) {
+          randomShipDirection = 0
+          this.indexOfRowLetter = 0
+          this.indexOfShipStart = 3
+          this.indexOfShipEnd = 8
+        }
+        if (i === 1) {
+          randomShipDirection = 0
+          this.indexOfRowLetter = 4
+          this.indexOfShipStart = 2
+          this.indexOfShipEnd = 6
+        }
+        if (i === 2) {
+          randomShipDirection = 0
+          this.indexOfRowLetter = 5
+          this.indexOfShipStart = 2
+          this.indexOfShipEnd = 6
+        }
+            console.log(this.battle_ships_arr[i], randomShipDirection, this.alphabet[this.indexOfRowLetter], this.indexOfShipStart, this.indexOfShipEnd);
 
         if (!randomShipDirection) {
           const chechArr = this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"].slice(this.indexOfShipStart, this.indexOfShipEnd+1);
           if (chechArr.every(str => str === false)) {
             this.rowsObj = this.deepCopyObj(this.rowsObj)
             for (let y = this.indexOfShipStart; y < this.indexOfShipEnd; y++) this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"][y] = 'x';
-          } else { i--; }
+          } else { 
+            console.log('PROBLEM1');
+            i--; }
         } else {
           const chechArr = [];
-          for (let z = this.indexOfShipStart; z < this.indexOfShipEnd; z++) {
-
-            chechArr.push(this.rowsObj[this.alphabet[i]]["isShipPartArr"][this.indexOfRowLetter]);
-          } 
+          for (let z = this.indexOfShipStart; z < this.indexOfShipEnd; z++) chechArr.push(this.rowsObj[this.alphabet[z]]["isShipPartArr"][this.indexOfRowLetter]);
           if (chechArr.every(str => str === false)) {
             this.rowsObj = this.deepCopyObj(this.rowsObj)
-            for (let z = this.indexOfShipStart; z < this.indexOfShipEnd; z++) this.rowsObj[this.alphabet[z]]["isShipPartArr"][this.indexOfRowLetter] = true;
+            for (let i = this.indexOfShipStart; i < this.indexOfShipEnd; i++) this.rowsObj[this.alphabet[i]]["isShipPartArr"][this.indexOfRowLetter] = true;
           } else { 
-            console.log(this.indexOfRowLetter, this.indexOfShipStart, this.indexOfShipEnd);
-            i--; }
+            console.log('PROBLEM2');
+            i--; } 
         }
       }
     },
@@ -134,11 +153,11 @@ export default {
     this.fillRowsObj();
     this.placeShipsInRandomPlaces();
 
-
 // IZTRII - DA VIJDAM SEGA MI TRQBVA
     for (const key in this.rowsObj) {
-        const arr = this.rowsObj[key]['isShipPartArr'];
+      const arr = this.rowsObj[key]['isShipPartArr'];
         for (let i = 0; i < arr.length; i++) {
+console.log('PASS');
           if(arr[i] === true) {
             this.rowsObj[key]['elementsArr'] = arr.map((bool) => bool ? 'x' : '.')
           }

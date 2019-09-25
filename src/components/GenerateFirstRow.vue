@@ -9,7 +9,7 @@ import { mapState } from "vuex";
 
 export default {
   name: "GenerateFirstRow",
-   computed: {
+  computed: {
     ...mapState({
       first_row_arr: state => state.first_row_arr,
       // game_grid: state => state.game_grid,
