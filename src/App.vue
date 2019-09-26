@@ -1,36 +1,32 @@
 <template>
   <div id="app">
-    <div v-if="shots > 0">*** {{shotText}} ***</div>
+    <GameText />
     <GameUI />
     <Coordinates />
-    <button @click="asd">{{battle_ships_total_parts}}</button>
-    <div v-if="battle_ships_total_parts === 0">Well done! You completed the game in {{shots}} shots</div>
+    <TextForGameEnd />
   </div>
 </template>
 
 <script>
-// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
-// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
-// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
-// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
-// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
-// FIX You should implement a show command to aid debugging and backdoor cheat. Example output after entering show
+import GameText from "./components/GameText.vue";
 import GameUI from "./components/GameUI.vue";
 import Coordinates from "./components/Coordinates.vue";
+import TextForGameEnd from "./components/TextForGameEnd.vue";
+
 import { mapActions, mapState } from "vuex";
 import { 
   ACTION_FIRST_ROW_ARR, 
   ACTION_ROWS_OBJ, 
   ACTION_BATTLE_SHIPS_TOTAL_PARTS,
-  // TEST
-  ACTION_SHOT_TAKEN,
 } from "../store/types.js"; 
 
 export default {
-  name: "app",
+  name: "App",
   components: {
+    GameText,
     GameUI,
     Coordinates,
+    TextForGameEnd
   },
   data() {
     return {
@@ -38,21 +34,14 @@ export default {
       indexOfShipStart: null,
       indexOfShipEnd: null,
       indexOfRowLetter: null
-    }
+    };
   },
   computed: {
     ...mapState({
-      first_row_arr: state => state.first_row_arr,
       game_grid: state => state.game_grid,
-      // NE SE POLZVA
-      rows_obj: state => state.rows_obj,
       alphabet: state => state.alphabet,
       dot: state => state.dot,
       battle_ships_arr: state => state.battle_ships_arr,
-      // NE SE POLZVA
-      battle_ships_total_parts: state => state.battle_ships_total_parts,
-      shots: state => state.shots,
-      shotText: state => state.shotText,
     }),
   },
   methods: {
@@ -60,13 +49,7 @@ export default {
       action_first_row_arr: ACTION_FIRST_ROW_ARR,
       action_rows_obj: ACTION_ROWS_OBJ,
       action_battle_ships_total_parts: ACTION_BATTLE_SHIPS_TOTAL_PARTS,
-  // TEST
-      action_shot_taken: ACTION_SHOT_TAKEN,
     }),
-  // TEST
-    asd() {
-      this.action_shot_taken(this.shots + 1);
-    },
     generateRandomVars(i) {
       const shipLength = this.battle_ships_arr[i];
       const min = 0;
@@ -91,84 +74,47 @@ export default {
       this.action_first_row_arr(firstRowArr);
     },
     fillRowsObj () {
+      // eslint-disable-next-line
       const elementsArr = Array.from({length: this.game_grid}, el => this.dot);
+      // eslint-disable-next-line
       const isShipPartArr = Array.from({length: this.game_grid}, el => false );
       for (let i = 0; i < this.game_grid; i++) this.rowsObj[[this.alphabet[i]]] = { elementsArr, isShipPartArr };
     },
     placeShipsInRandomPlaces() {
       for (let i = 0; i < this.battle_ships_arr.length; i++) {
-        // const randomShipDirection = Math.floor(Math.random () * (1 - 0 + 1)) + 0
-        let randomShipDirection = 0
+        const randomShipDirection = Math.floor(Math.random () * (1 - 0 + 1)) + 0;
         this.generateRandomVars(i);
-
-
-        // if (i === 0) {
-        //   randomShipDirection = 1
-        //   this.indexOfRowLetter = 4
-        //   this.indexOfShipStart = 4
-        //   this.indexOfShipEnd = 9
-        // }
-        // if (i === 1) {
-        //   randomShipDirection = 0
-        //   this.indexOfRowLetter = 5
-        //   this.indexOfShipStart = 5
-        //   this.indexOfShipEnd = 9
-        // }
-        // if (i === 2) {
-        //   randomShipDirection = 1
-        //   this.indexOfRowLetter = 0
-        //   this.indexOfShipStart = 0
-        //   this.indexOfShipEnd = 4
-        // }
-            console.log(this.battle_ships_arr[i], randomShipDirection, this.alphabet[this.indexOfRowLetter], this.indexOfShipStart, this.indexOfShipEnd);
-
-
-        if (!randomShipDirection) {
-          const chechArr = this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"].slice(this.indexOfShipStart, this.indexOfShipEnd+1);
-          if (chechArr.every(str => str === false)) {
-            this.rowsObj = this.deepCopyObj(this.rowsObj)
-            for (let y = this.indexOfShipStart; y < this.indexOfShipEnd; y++) this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"][y] = 'x';
-          } else { i--; }
-        } else {
-          const chechArr = [];
-          for (let z = this.indexOfShipStart; z < this.indexOfShipEnd; z++) {
-
-            chechArr.push(this.rowsObj[this.alphabet[i]]["isShipPartArr"][this.indexOfRowLetter]);
-          } 
-          if (chechArr.every(str => str === false)) {
-            this.rowsObj = this.deepCopyObj(this.rowsObj)
-            for (let z = this.indexOfShipStart; z < this.indexOfShipEnd; z++) this.rowsObj[this.alphabet[z]]["isShipPartArr"][this.indexOfRowLetter] = true;
-          } else { 
-            console.log(this.indexOfRowLetter, this.indexOfShipStart, this.indexOfShipEnd);
-            i--; }
-        }
+        (!randomShipDirection) ? i -= this.shipInRow(i) : i -= this.shipInColumn(i);
       }
     },
-    // shipInRow(i) {
-    //   const chechArr = this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"].slice(this.indexOfShipStart, this.indexOfShipEnd);
-    //   if (chechArr.every(str => str === false)) {
-    //     this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"] = this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"].map((bool, index) => index >= this.indexOfShipStart && index < this.indexOfShipEnd? true : false);
-    //   } else { i--; }
-    // },
+    // eslint-disable-next-line
+    shipInRow(i) {
+      const chechArr = this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"].slice(this.indexOfShipStart, this.indexOfShipEnd);
+      if (chechArr.every(str => str === false)) {
+        this.rowsObj = this.deepCopyObj(this.rowsObj);
+        for (let y = this.indexOfShipStart; y < this.indexOfShipEnd; y++) {
+          this.rowsObj[this.alphabet[this.indexOfRowLetter]]["isShipPartArr"][y] = true;
+        } 
+        return 0;
+      } else { return 1; }
+    },
+    // eslint-disable-next-line
+    shipInColumn(i) {
+      const chechArr = [];
+      for (let z = this.indexOfShipStart; z < this.indexOfShipEnd; z++) chechArr.push(this.rowsObj[this.alphabet[z]]["isShipPartArr"][this.indexOfRowLetter]);
+      if (chechArr.every(str => str === false)) {
+        this.rowsObj = this.deepCopyObj(this.rowsObj);
+        for (let z = this.indexOfShipStart; z < this.indexOfShipEnd; z++) this.rowsObj[this.alphabet[z]]["isShipPartArr"][this.indexOfRowLetter] = true;
+        return 0;
+      } else { return 1; }
+    },
   },
   created() {
     //#region fill data in Vuex
-    // this.fillFirstRowArr();
-    // this.fillRowsObj();
-    // this.placeShipsInRandomPlaces();
-
-
-// IZTRII - DA VIJDAM SEGA MI TRQBVA
-    for (const key in this.rowsObj) {
-        const arr = this.rowsObj[key]['isShipPartArr'];
-        for (let i = 0; i < arr.length; i++) {
-          if(arr[i] === true) {
-            this.rowsObj[key]['elementsArr'] = arr.map((bool) => bool ? 'x' : '.')
-          }
-        }
-    }
-    console.log(this.rowsObj);
-
+    this.fillFirstRowArr();
+    this.fillRowsObj();
+    this.placeShipsInRandomPlaces();
+    
     this.action_rows_obj(this.rowsObj);
     this.action_battle_ships_total_parts(this.battle_ships_arr.reduce((a, b) => a + b, 0));
     //#endregion

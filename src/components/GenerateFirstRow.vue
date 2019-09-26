@@ -12,15 +12,10 @@ export default {
   computed: {
     ...mapState({
       first_row_arr: state => state.first_row_arr,
-      // game_grid: state => state.game_grid,
-      // rows_obj: state => state.rows_obj,
-      // alphabet: state => state.alphabet,
-      // dot: state => state.dot,
     }),
   },
 };
 // FIX - .singleItem DA SE IZNESE V SASS MIXIN, 4E SE POLZVA NA MNOGO MESTA
-// FIX - .row DA SE IZNESE V SASS MIXIN, 4E SE POLZVA NA MNOGO MESTA
 </script>
 
 <style scoped lang="sass">

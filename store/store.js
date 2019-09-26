@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import * as types from './types'
+import Vue from "vue";
+import Vuex from "vuex";
+import * as types from "./types";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
@@ -15,7 +15,7 @@ export default new Vuex.Store({
     battle_ships_arr: [5, 4, 4],
     battle_ships_total_parts: null,
     shots: 0,
-    shotText: ''
+    shotText: ""
   },
   mutations: {
     [types.FIRST_ROW_ARR]: (state, payload) => {
@@ -57,4 +57,4 @@ export default new Vuex.Store({
       commit(types.SHOT_TEXT, payload);
     },
   }
-})
+});

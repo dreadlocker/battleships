@@ -14,22 +14,9 @@ export default {
   name: "GenerateRestRows",
   computed: {
     ...mapState({
-      // first_row_arr: state => state.first_row_arr,
-      // game_grid: state => state.game_grid,
       rows_obj: state => state.rows_obj,
-      // alphabet: state => state.alphabet,
-      // dot: state => state.dot,
     }),
   },
-  // beforeMount() {
-  // console.log(this.rows_obj["A"]['elementsArr']);
-  // },
-  // watch: {
-  //   rows_obj(val) {
-  //     console.log('object');
-  //     console.log(val);
-  //   }
-  // }
 };
 </script>
 
